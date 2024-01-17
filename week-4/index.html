@@ -7,16 +7,24 @@
     let todoState = [];
     let oldTodoState = [];
 
-    function addTodoToDom() {
-      
+    function addTodoToDom(todo) {
+     const div = document.getElementById('todos')
+     const newP = document.createElement('p');
+      newP.id = todo.id
+      newP.textContent = `Title: ${todo.title} Description: ${todo.description}`
+      div.appendChild(newP)
     }
 
     function removeTodoFromDom(todo) {
-      
+     const todoToRemove = document.getElementById(todo.id)
+     if(todoToRemove)
+        todoToRemove.remove() 
     }
 
-    function updateTodoInDom(oldTodo, newTodo) {
-        
+    function updateTodoInDom(UpdatedTodo) {
+      const todoToUpdate = document.getElementById(UpdatedTodo.id)
+      todoToUpdate.textContent = `Title: ${UpdatedTodo.title} Description: ${UpdatedTodo.description}`
+      
     }
 
     function updateState(newTodos) {
@@ -31,6 +39,43 @@
       // calculate these 3 arrays
       // call addTodo, removeTodo, updateTodo functions on each of the
       // elements
+        newTodos.forEach(newStateTodo => {
+          let notMatch = 0;
+          oldTodoState.forEach(oldStateTodo =>
+          {
+            if(newStateTodo.id === oldStateTodo.id && (newStateTodo.title != oldStateTodo.title ||
+            newStateTodo.description != oldStateTodo.description))
+            {
+            updated.push(newStateTodo)
+            return
+            }
+            else if (newStateTodo.id !== oldStateTodo.id)
+            {
+              notMatch+=1
+            }
+          })
+          if(notMatch === oldTodoState.length)
+            added.push(newStateTodo)
+        });
+
+        oldTodoState.forEach((oldStateTodo)=>
+        {
+          let notMatch = 0
+          newTodos.forEach((newStateTodo)=>
+          {
+            if(oldStateTodo.id != newStateTodo)
+            notMatch+=1
+
+          })
+          if(notMatch === newTodos.length)
+          deleted.push(oldStateTodo)
+        })
+
+        added.forEach((todo)=> addTodoToDom(todo))
+
+        deleted.forEach((todo)=> removeTodoFromDom(todo))
+
+        updated.forEach((todo)=> updateTodoInDom(todo))
       oldTodoState = newTodos;
     }
 
@@ -54,7 +99,7 @@
   <br /> <br />
 
   <div id="todos">
-
+   
   </div>
 </body>
 

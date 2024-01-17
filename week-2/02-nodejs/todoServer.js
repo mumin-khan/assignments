@@ -41,9 +41,83 @@
  */
   const express = require('express');
   const bodyParser = require('body-parser');
-  
+  const { v4: uuidv4 } = require('uuid');
   const app = express();
   
   app.use(bodyParser.json());
-  
-  module.exports = app;
+  let todos = []
+
+  app.get('/todos',(req,res)=>
+  {
+    res.status(200).json(todos)
+  })
+
+  app.get('/todos/:id', (req, res) => {
+    const id = req.params.id;
+    console.log(id)
+    // You can use the captured id parameter in your logic
+    const responseData = todos.filter((todo)=>
+    {
+      return todo.id === id
+    })
+    console.log(responseData)
+    if(responseData.length === 0)
+     {
+      console.log(responseData,9)
+      res.status(404).end()
+     }
+    else res.status(200).json(responseData[0]);
+  });
+
+  app.post('/todos', (req,res) => 
+  {
+    const id = uuidv4()
+    console.log(req.body)
+
+    todos.push(
+      {
+        id,
+        title:req.body.title,
+        description:req.body.description,
+        completed:req.body.completed
+      }
+    )
+    res.status(201).json({id})
+  })
+
+  app.put('/todos/:id',(req,res)=>
+  {
+    const id = req.params.id;
+    const todo = todos.find((todo)=> todo.id === id )
+    if(!todo)
+   {
+    res.status(404).end()
+   } 
+   else
+   {
+    console.log(99)
+    if(req.body?.title)
+      todo.title = req.body.title
+    if(req.body?.description)
+      todo.description = req.body.description
+    if(req.body?.completed)
+      todo.completed = req.body.completed
+    console.log(todo)
+    res.status(200).end()
+   }
+  })
+
+  app.delete("/todos/:id", (req,res)=>
+  {
+    const id = req.params.id
+    const todo = todos.filter((todo)=> todo.id === id)
+    if(todos.length === 0)
+    res.status(400).end()
+
+    else{
+      todos = todos.filter((todo)=>todo.id != id)
+    res.status(200).end()
+    }
+  })
+ 
+   module.exports = app;
