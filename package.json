@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "prop-types": "^15.8.1",
+    "recoil": "^0.7.7",
     "vite": "^5.0.11"
   }
 }

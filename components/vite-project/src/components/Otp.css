@@ -1,0 +1,11 @@
+.overlay {
+    position: fixed;
+    top: 30%;
+    left: 30%;
+    width: 50%;
+    height: 40%;
+    background:rgba(0, 0, 0, 0.5);; /* Semi-transparent black background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
