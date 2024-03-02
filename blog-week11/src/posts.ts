@@ -2,17 +2,18 @@ import { Hono } from 'hono'
 import { PrismaClient } from '@prisma/client/edge'
 import { withAccelerate } from '@prisma/extension-accelerate'
 import { timing } from 'hono/timing'
+import { Bindings } from '.'
 
-const postRouter = new Hono()
+const postRouter = new Hono<{Bindings:Bindings}>()
 
-const prisma = new PrismaClient({
-  datasourceUrl: "prisma://accelerate.prisma-data.net/?api_key=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlfa2V5IjoiOTNhYmQwNTUtMmI1Ny00ODAwLTg5ZTQtOGZjNzRjNjZiZGM4IiwidGVuYW50X2lkIjoiZTYwZDMxMjYzOTI0Yzk2MzI5NjIxMTA1ZTg0NjhlMTYxNmMxMzgzMjUyMjFmMTNlY2E4YjNlYjgyOWI5MjBjMyIsImludGVybmFsX3NlY3JldCI6ImJiYmJjMTMyLWExOWItNDlkMi04NjRiLTJkNDAxNjkwMDM5MyJ9.hhmL5tjJ2QSfRfeQoszXN3WZ483l3QtFwikknzurYRE"
-
-}).$extends(withAccelerate())
 postRouter.get('/test',async (c)=>{
     return c.json("lop")
 })
 postRouter.post('/tag',async(c)=>{
+    const prisma = new PrismaClient({
+        datasourceUrl: c.env.DATABASE_URL,
+      
+      }).$extends(withAccelerate())
     const body = await c.req.json()
     if(body.name)
     {
@@ -46,6 +47,10 @@ postRouter.post('/tag',async(c)=>{
     }
 )
 postRouter.post('/create',async (c:any)=>{
+    const prisma = new PrismaClient({
+        datasourceUrl: c.env.DATABASE_URL,
+      
+      }).$extends(withAccelerate())
     const body = await c.req.json()
 
     const userId = c.req.userId
@@ -86,12 +91,20 @@ postRouter.post('/create',async (c:any)=>{
 
 })
 postRouter.get('/',async(c)=>{
+    const prisma = new PrismaClient({
+        datasourceUrl: c.env.DATABASE_URL,
+      
+      }).$extends(withAccelerate())
    const posts =  await prisma.blog.findMany({
         include: { tags: true }})
 
     return c.json(posts)
 })
 postRouter.get('/:id',async(c)=>{
+    const prisma = new PrismaClient({
+        datasourceUrl: c.env.DATABASE_URL,
+      
+      }).$extends(withAccelerate())
     const postId = c.req.param('id')
    const posts =  await prisma.blog.findUnique({
         where:{id:parseInt(postId)},
@@ -101,6 +114,10 @@ postRouter.get('/:id',async(c)=>{
 })
 
 postRouter.delete('/:id',async(c)=>{
+    const prisma = new PrismaClient({
+        datasourceUrl: c.env.DATABASE_URL,
+      
+      }).$extends(withAccelerate())
     const postId = c.req.param('id')
    const deletedPost = await prisma.blog.delete({
         where:{id:parseInt(postId)}
@@ -109,6 +126,10 @@ postRouter.delete('/:id',async(c)=>{
 })
 
 postRouter.put('/:id',async (c)=>{
+    const prisma = new PrismaClient({
+        datasourceUrl: c.env.DATABASE_URL,
+      
+      }).$extends(withAccelerate())
     const body = await c.req.json()
     const postId = c.req.param('id')
 

@@ -5,12 +5,13 @@ import {sign} from 'hono/jwt'
 import { Bindings } from '.'
 const userRouter = new Hono<{Bindings:Bindings}>()
 
-const prisma = new PrismaClient({
-  datasourceUrl: "prisma://accelerate.prisma-data.net/?api_key=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlfa2V5IjoiOTNhYmQwNTUtMmI1Ny00ODAwLTg5ZTQtOGZjNzRjNjZiZGM4IiwidGVuYW50X2lkIjoiZTYwZDMxMjYzOTI0Yzk2MzI5NjIxMTA1ZTg0NjhlMTYxNmMxMzgzMjUyMjFmMTNlY2E4YjNlYjgyOWI5MjBjMyIsImludGVybmFsX3NlY3JldCI6ImJiYmJjMTMyLWExOWItNDlkMi04NjRiLTJkNDAxNjkwMDM5MyJ9.hhmL5tjJ2QSfRfeQoszXN3WZ483l3QtFwikknzurYRE",
 
-}).$extends(withAccelerate())
 
 userRouter.post('/signup',async (c)=>{
+    const prisma = new PrismaClient({
+        datasourceUrl: c.env.DATABASE_URL,
+      
+      }).$extends(withAccelerate())
     const body = await c.req.json()
 
     if (body.username && body.email && body.password)
@@ -52,7 +53,10 @@ userRouter.post('/signup',async (c)=>{
 })
 
 userRouter.post('/signin',async (c)=>{
- 
+    const prisma = new PrismaClient({
+        datasourceUrl: c.env.DATABASE_URL,
+      
+      }).$extends(withAccelerate())
     const body = await c.req.json()
     console.log(body)
     const user = await prisma.user.findUnique({
